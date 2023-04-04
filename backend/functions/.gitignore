@@ -1,1 +1,5 @@
 node_modules/
+
+# Ignore environment variables & Service Account Key JSON file
+.env
+flashcard-app-test-*.json
