@@ -13,3 +13,6 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 /* Export functions in different files */
 const {addFlashcardSet} = require("./flashcard");
 exports.addFlashcardSet = addFlashcardSet;
+
+const {newUserSignup} = require("./user");
+exports.newUserSignup = newUserSignup;
