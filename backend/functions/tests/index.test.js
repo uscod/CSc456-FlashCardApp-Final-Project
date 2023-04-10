@@ -1,12 +1,9 @@
-const config = require("./config");
-const serviceAccount = config.FIREBASE_KEY;
+const path = require("path");
 
-const firebaseAdmin = require("firebase-admin");
-firebaseAdmin.initializeApp();
-const fft = require("firebase-functions-test")({
-  projectId: process.env.FB_SA_PROJECT_ID,
-  credentials: serviceAccount,
-});
+const fft = require("firebase-functions-test")(
+    {projectId: process.env.FB_SA_PROJECT_ID},
+    path.resolve(__dirname, "./serviceAccountKey.json"),
+);
 
 // Testing https.onRequest function
 describe("test helloWorld", () => {
