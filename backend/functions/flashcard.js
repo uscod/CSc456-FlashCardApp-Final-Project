@@ -42,7 +42,7 @@ exports.addFlashcardSet = functions.https.onCall(async (data, context) => {
     );
   }
   if (
-    !Array.isArray(data.cards) &&
+    !Array.isArray(data.cards) ||
     !myUtils.arrayOfObjContainKeys(data.cards, ["question", "answer"])
   ) {
     const errMsg =
@@ -82,7 +82,7 @@ exports.addFlashcardSet = functions.https.onCall(async (data, context) => {
       ],
     });
     // Return the flashcard set created to the client
-    return flashcardSet;
+    return {...flashcardSet, flashcardId: docRef.id};
   } catch (err) {
     // Re-throwing the error as an HttpsError so the client gets the
     // error details
