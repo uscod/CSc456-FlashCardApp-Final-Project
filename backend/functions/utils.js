@@ -17,6 +17,18 @@ exports.isStrBetween = (str, min, max) => {
   );
 };
 
+// Function to determine if value is a literal object (not custom objects
+// such as classes)
+// - Ref: https://stackoverflow.com/a/51458052
+exports.isLiteralObject = (obj) => {
+  return (
+    obj !== null &&
+    typeof obj === "object" &&
+    !!obj.constructor && // Rare case of Object.create(null)
+    obj.constructor.name === "Object"
+  );
+};
+
 // Function to help validate the 1st layer of keys of objects in an array
 // such that it include keys in the "keys" parameter and make sure their
 // values are non-empty
@@ -24,10 +36,7 @@ exports.isStrBetween = (str, min, max) => {
 exports.arrayOfObjContainKeys = (arr, keys) => {
   if (
     !Array.isArray(arr) ||
-    !arr.every(
-        (entry) =>
-          typeof entry === "object" && entry !== null && !Array.isArray(entry),
-    )
+    !arr.every((entry) => this.isLiteralObject(entry))
   ) {
     throw new Error("\"arr\" parameter must be an array of objects.");
   }
