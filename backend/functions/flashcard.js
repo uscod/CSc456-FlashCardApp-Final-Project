@@ -43,11 +43,12 @@ exports.addFlashcardSet = functions.https.onCall(async (data, context) => {
   }
   if (
     !Array.isArray(data.cards) ||
+    data.cards.length === 0 ||
     !myUtils.arrayOfObjContainKeys(data.cards, ["question", "answer"])
   ) {
     const errMsg =
-      "The \"cards\" field must be an array of objects with keys \"question\"" +
-      " and \"answer\" with non-empty string values.";
+      "The \"cards\" field must be a non-empty array of objects with keys" +
+      " \"question\" and \"answer\" with non-empty string values.";
     throw new functions.https.HttpsError("invalid-argument", errMsg);
   }
 

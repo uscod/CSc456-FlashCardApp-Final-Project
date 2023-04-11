@@ -37,7 +37,7 @@ describe("arrayOfObjContainKeys", () => {
   });
 
   test("throws error on invalide input", () => {
-    const cases = ["", {}, [""], [1], [[]]];
+    const cases = ["", {}, [""], [1], [[]], [{}, []]];
     for (const arr of cases) {
       expect(() => arrayOfObjContainKeys(arr, [])).toThrow(
           "\"arr\" parameter must be an array of objects.",

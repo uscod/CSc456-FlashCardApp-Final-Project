@@ -125,6 +125,7 @@ describe("addFlashcardSet", () => {
     };
     const context = {auth: {uid: user.uid}};
     const cases = [
+      [],
       [{}],
       [{question: ""}],
       [{question: "", answer: ""}],
@@ -136,8 +137,8 @@ describe("addFlashcardSet", () => {
       data.cards = testVal;
       await expect(addFlashcardSet(data, context)).rejects.toEqual(
           new Error(
-              "The \"cards\" field must be an array of objects with keys" +
-            " \"question\" and \"answer\" with non-empty string values.",
+              "The \"cards\" field must be a non-empty array of objects with" +
+              " keys \"question\" and \"answer\" with non-empty string values.",
           ),
       );
     }
