@@ -22,8 +22,14 @@ exports.isStrBetween = (str, min, max) => {
 // values are non-empty
 //  - Returns "false" to silently handle errors
 exports.arrayOfObjContainKeys = (arr, keys) => {
-  if (!Array.isArray(arr)) {
-    throw new Error("\"arr\" parameter must be an array.");
+  if (
+    !Array.isArray(arr) ||
+    !arr.every(
+        (entry) =>
+          typeof entry === "object" && entry !== null && !Array.isArray(entry),
+    )
+  ) {
+    throw new Error("\"arr\" parameter must be an array of objects.");
   }
   if (!Array.isArray(keys) || !keys.every((key) => typeof key === "string")) {
     throw new Error("\"keys\" parameter must be an array of strings.");
