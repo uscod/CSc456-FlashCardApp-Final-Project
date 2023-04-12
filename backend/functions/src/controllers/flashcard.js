@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
-const myUtils = require("./utils.js");
+const myUtils = require("../utils.js");
 
 /*
   Cloud Function to create a flashcard set as an authenticated user.

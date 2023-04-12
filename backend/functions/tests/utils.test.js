@@ -1,4 +1,4 @@
-const utils = require("../utils");
+const utils = require("../src/utils");
 
 describe("isStrBetween", () => {
   const isStrBetween = utils.isStrBetween;
