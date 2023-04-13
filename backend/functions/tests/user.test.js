@@ -39,7 +39,6 @@ describe("newUserSignup", () => {
     expect(snapshot.id).toBe(user.uid);
     expect(snapshot.data()).toEqual({
       email: user.email,
-      username: null,
       created_flashcards: [],
     });
   });

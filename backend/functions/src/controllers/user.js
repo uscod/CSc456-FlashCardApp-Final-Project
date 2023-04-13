@@ -6,7 +6,6 @@ const admin = require("firebase-admin");
 exports.newUserSignup = functions.auth.user().onCreate((user) => {
   return admin.firestore().collection("users").doc(user.uid).set({
     email: user.email,
-    username: null,
     created_flashcards: [],
   });
 });
