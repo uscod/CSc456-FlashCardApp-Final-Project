@@ -90,3 +90,95 @@ exports.addFlashcardSet = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError("unknown", err.message, err);
   }
 });
+
+/**
+ * cloud function to update a flashcard set.
+
+  Expected input:
+    - "flashcardId"
+    - "title" <string (1-30 characters)>
+    - "category" <string (1-30 characters)>
+      - "cards" []
+      - "question" <string (1+ characters)>
+      - "answer" <string (1+ characters)>
+ */
+exports.updateFlashcardSet = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    const errMsg = "You must be authenticated to update a flashcard set.";
+    throw new functions.https.HttpsError("unauthenticated", errMsg);
+  }
+
+  // Make sure required fields are provided
+  const requiredFields = ["flashcardId", "title", "category", "cards"];
+  requiredFields.forEach((field) => {
+    if (!data[field]) {
+      const errMsg = `The "${field}" field must be provided.`;
+      throw new functions.https.HttpsError("invalid-argument", errMsg);
+    }
+  });
+
+  // Valdiate each field
+  if (!myUtils.isStrBetween(data.title, 1, 30)) {
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "The \"title\" field must be a string between 1-30 characters.",
+    );
+  }
+  if (!myUtils.isStrBetween(data.category, 1, 30)) {
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "The \"category\" field must be a string between 1-30 characters.",
+    );
+  }
+  if (
+    !Array.isArray(data.cards) ||
+    data.cards.length === 0 ||
+    !myUtils.arrayOfObjContainKeys(data.cards, ["question", "answer"])
+  ) {
+    const errMsg =
+      "The \"cards\" field must be a non-empty array of objects with keys" +
+      " \"question\" and \"answer\" with non-empty string values.";
+    throw new functions.https.HttpsError("invalid-argument", errMsg);
+  }
+
+  // Format data to be updated in the database
+  const flashcardSetMetaData = {
+    title: data.title.trim(),
+    category: data.category.trim(),
+    timestamp: Date.now(),
+  };
+  const flashcardSet = {
+    cards: data.cards.map((obj) => ({
+      question: obj.question.trim(),
+      answer: obj.answer.trim(),
+    })),
+    ...flashcardSetMetaData,
+  };
+
+  try {
+    // Update the flashcard set in the "flashcards" database
+    await admin
+        .firestore()
+        .collection("flashcards")
+        .doc(data.flashcardId)
+        .update(flashcardSet);
+    // Update the reference to the flashcard set in the "users" database
+    const user = admin.firestore().collection("users").doc(context.auth.uid);
+    const userDoc = await user.get();
+    const createdFlashcards = userDoc.data().created_flashcards;
+    const index = createdFlashcards.findIndex(
+        (flashcard) => flashcard.flashcardId === data.flashcardId,
+    );
+    createdFlashcards[index] = {
+      ...flashcardSetMetaData,
+      flashcardId: data.flashcardId,
+    };
+    await user.update({created_flashcards: createdFlashcards});
+    // Return the updated flashcard set to the client
+    return {...flashcardSet, flashcardId: data.flashcardId};
+  } catch (err) {
+    // Re-throwing the error as an HttpsError so the client gets the
+    // error details
+    throw new functions.https.HttpsError("unknown", err.message, err);
+  }
+});

@@ -11,8 +11,14 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 });
 
 /* Export functions in different files */
-const {addFlashcardSet} = require("./src/controllers/flashcard");
+const {
+  addFlashcardSet,
+  updateFlashcardSet,
+} = require("./src/controllers/flashcard");
+
 exports.addFlashcardSet = addFlashcardSet;
+exports.updateFlashcardSet = updateFlashcardSet;
+
 
 const {newUserSignup} = require("./src/controllers/user");
 exports.newUserSignup = newUserSignup;
