@@ -157,7 +157,7 @@ exports.updateFlashcardSet = functions.https.onCall(async (data, context) => {
 
   try {
     // Update the flashcard set in the "flashcards" database
-    await admin
+    const docRef = await admin
         .firestore()
         .collection("flashcards")
         .doc(data.flashcardId)
@@ -171,11 +171,11 @@ exports.updateFlashcardSet = functions.https.onCall(async (data, context) => {
     );
     createdFlashcards[index] = {
       ...flashcardSetMetaData,
-      flashcardId: data.flashcardId,
+      flashcardId: docRef.id,
     };
     await user.update({created_flashcards: createdFlashcards});
     // Return the updated flashcard set to the client
-    return {...flashcardSet, flashcardId: data.flashcardId};
+    return {...flashcardSet, flashcardId: docRef.id};
   } catch (err) {
     // Re-throwing the error as an HttpsError so the client gets the
     // error details
