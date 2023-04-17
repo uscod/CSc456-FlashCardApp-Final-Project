@@ -21,7 +21,5 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_JAVASCRIPT_ES: false
-          VALIDATE_PYTHON_BLACK: true
-          VALIDATE_HTML: true
+          VALIDATE_JAVASCRIPT_STANDARD: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
